@@ -67,7 +67,7 @@ public class DeckController {
     }
 
     @PostMapping("/{deckId}/cards")
-    @PreAuthorize("isAuthenticated()")  // or specific role like "hasRole('USER')"
+    @PreAuthorize("isAuthenticated()")
     public Deck addCardToDeck(@PathVariable Long deckId, @RequestBody List<Card> cards) {
         return deckService.addCardToDeck(deckId, cards);
     }

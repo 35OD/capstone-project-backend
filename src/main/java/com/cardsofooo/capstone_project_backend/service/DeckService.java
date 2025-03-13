@@ -25,7 +25,6 @@ public class DeckService {
     public Deck createDeck(Deck deck) {
         log.info("Creating deck: {}", deck);
 
-        // Fetch complete card objects from database
         if (deck.getCards() != null && !deck.getCards().isEmpty()) {
             List<Card> completeCards = new ArrayList<>();
             for (Card card : deck.getCards()) {
@@ -56,11 +55,9 @@ public class DeckService {
         Deck deck = deckRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Deck not found"));
 
-        // Clear the deck's card associations first
         deck.getCards().clear();
         deckRepository.save(deck);
 
-        // Now delete the deck
         deckRepository.delete(deck);
     }
 
