@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties({"password", "decks"})
+@JsonIgnoreProperties({ "decks"})
 @Entity
 public class User {
     @Id
@@ -21,7 +21,7 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private String profilePicture;
+
 
     @JsonManagedReference
     @OneToMany(mappedBy = "user")
