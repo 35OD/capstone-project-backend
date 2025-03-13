@@ -5,6 +5,7 @@ import com.cardsofooo.capstone_project_backend.model.Deck;
 import com.cardsofooo.capstone_project_backend.model.User;
 import com.cardsofooo.capstone_project_backend.repository.CardRepository;
 import com.cardsofooo.capstone_project_backend.repository.DeckRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,17 +36,7 @@ public class DeckService {
             deck.setCards(completeCards);
         }
 
-        Deck savedDeck = deckRepository.save(deck);
-
-        // Establish bidirectional relationship
-        if (deck.getCards() != null) {
-            deck.getCards().forEach(card -> card.setDeck(savedDeck));
-            cardRepository.saveAll(deck.getCards());
-        }
-
-
-        return deckRepository.findById(savedDeck.getId())
-                .orElseThrow(() -> new RuntimeException("Failed to retrieve saved deck"));
+        return deckRepository.save(deck);
     }
   public List<Deck> getAllDecks(){
         return deckRepository.findAll();
@@ -60,8 +51,17 @@ public class DeckService {
         return deckRepository.save(deck);
     }
 
-    public void deleteDeck(Long id){
-        deckRepository.deleteById(id);
+    @Transactional
+    public void deleteDeck(Long id) {
+        Deck deck = deckRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Deck not found"));
+
+        // Clear the deck's card associations first
+        deck.getCards().clear();
+        deckRepository.save(deck);
+
+        // Now delete the deck
+        deckRepository.delete(deck);
     }
 
     public Deck addCardToDeck(Long deckId, List<Card> cards) {
